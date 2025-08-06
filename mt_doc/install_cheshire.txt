@@ -1,0 +1,140 @@
+493  git clone https://github.com/pulp-platform/cheshire
+497  cd cheshire
+### if needed create a conda env for python wit hthe right lib :
+# conda create --name CSH_ga25f6 python=3.9 requests hjson mako pyyaml tabulate yapf mkdocs mkdocs-material markdown-grid-tables tclint==0.4.2 flatdict\n
+501  conda init zsh
+###  maybe switch to bash ...
+502  conda activate CSH_ga25f6
+#### checking version
+505  python -v
+507  make -v
+510  cmake --version
+512  bender --version
+514  echo $PATH
+515  export PATH=/usr/pack/riscv-1.0-kgf/riscv64-gcc-11.2.0/bin:$PATH
+517  cd /scratch/ga25f6/cheshire
+520  make all
+521  cd target/sim/vsim
+535  questa-2022.3-bt vsim
+###  Sim on questa
+536  cd ../vcs
+537  vcs-2024.09-zr bash
+###  Sim on VCS (under bash)
+538  exit
+539  conda deactivate
+### Leaving proprely
+
+
+
+
+### Command for vsim : 
+# Preload `helloworld.spm.elf` through serial link
+set BINARY ../../../sw/tests/helloworld.spm.elf
+set BOOTMODE 0
+set PRELMODE 1
+
+# Compile design
+source compile.cheshire_soc.tcl
+
+# Start and run simulation
+source start.cheshire_soc.tcl
+run -all
+
+
+### Command for VCS : 
+# Preload `helloworld.spm.elf` through serial link
+export BINARY="../../../sw/tests/helloworld.spm.elf"
+export BOOTMODE=0
+export PRELMODE=1
+
+# Compile design
+./compile.cheshire_soc.sh
+
+# Start and run simulation
+./start.cheshire_soc.sh
+
+#####################
+### test with dtm ###
+setting PK will make it used, to run without pk, just don't set it. 
+This way, binary from riscv-tests can be run on cheshire
+####################
+###     vsim     ###
+####################
+
+set PK /scratch/ga25f6/riscv-pk/install/riscv64-unknown-elf/bin/pk
+set BINARY /scratch/ga25f6/cheshire/sw/apps/helloworld.riscv
+set BOOTMODE 0
+set PRELMODE 1
+
+source compile.cheshire_soc_fesvr.tcl
+
+source start.cheshire_soc.tcl
+run -all
+
+#### Different PK
+set PK /scratch/ga25f6/riscv-pk/install/riscv64-unknown-elf/bin/pk
+set PK /scratch/ga25f6/pk_dram
+
+#### Different BINARY
+set BINARY /scratch/ga25f6/cheshire/sw/apps/helloworld.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/print_add.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/dhrystone.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/dhrystone.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/median.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/mem_cpy.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/multiply.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/pmp.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/qsort.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/rsort.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/spmv.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/benchmarks/user_level/towers.riscv
+
+source start.cheshire_soc.tcl
+do wave.do
+run -all
+
+
+#####################
+###      vcs      ###
+#####################
+export PK="/scratch/ga25f6/riscv-pk/install/riscv64-unknown-elf/bin/pk"
+export BINARY="/scratch/ga25f6/cheshire/sw/apps/helloworld.riscv"
+export BOOTMODE=0
+export PRELMODE=1
+
+# Compile design
+./compile.cheshire_soc_fesvr.sh
+
+# Start and run simulation
+./start.cheshire_soc.sh
+
+#### Different PK
+export PK="/scratch/ga25f6/pk_dram"
+export PK="/scratch/ga25f6/riscv-pk/install/riscv64-unknown-elf/bin/pk"
+
+#### Different BINARY
+
+
+###############################
+###############################
+###############################
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/median.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/mm.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/mt-memcpy.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/multiply.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/qsort.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/spm.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/vec-daxpy.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/vec-sgemm.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/vvadd.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/dhrystone.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/memcpy.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/mt-matmul.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/mt-vvadd.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/pmp.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/rsort.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/towers.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/vec-memcpy.riscv
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-tests/install/share/riscv-tests/benchmarks/vec-strcmp.riscv
+
+set BINARY /scratch/ga25f6/cheshire/sw/apps/riscv-coremark/coremark.riscv

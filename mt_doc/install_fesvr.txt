@@ -1,0 +1,59 @@
+########################################################################
+###           Script for basic install, will not work                ###
+########################################################################
+git clone https://github.com/riscv-software-src/riscv-isa-sim 
+cd riscv-isa-sim
+mkdir build install
+cd build
+../configure --prefix=`realpath ../install/` --without-boost-regex
+make
+make install
+
+
+
+
+##### To create shared lib 
+g++ -L. -Wl,--export-dynamic -L/usr/lib64  -Wl,-rpath,/scratch/ga25f6/riscv-isa-sim/install/lib  -shared -o libfesvr.so  elfloader.o htif.o memif.o dtm.o syscall.o device.o rfb.o context.o htif_pthread.o htif_hexwriter.o dummy.o option_parser.o term.o tsi.o  -lpthread -ldl -lpthread
+# copy shared lib in install dir
+cp ./libfesvr.so ../install/lib/
+
+
+##################################################################################################
+You might have libfesvr.so, but it won't work cause using the wrong context
+
+Using the script to install everything will compile context.c with to much lib,
+which will define a param that we don't want.
+So you must follow the next instruction, that will be used to install fesvr as a shared lib.
+When running, you will face 2 warnings, for now it's working with them.
+
+Then you should do make and make install, it will install other things that will be used by fesvr
+##################################################################################################
+
+
+###################
+### Full script ###
+###################
+cd sw/deps/riscv-isa-sim
+mkdir -p build install/lib install/include/fesvr install/include/riscv
+cd build
+../configure --prefix=`realpath ../install/` --without-boost-regex
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/elfloader.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/htif.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/memif.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/dtm.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/syscall.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/device.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/rfb.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include/pthread.h   -c ../fesvr/context.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/htif_pthread.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/htif_hexwriter.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/dummy.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/option_parser.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/term.cc
+g++ -MMD -MP  -DPREFIX=\"`realpath ../install/`\" -Wall -Wno-nonportable-include-path -g -O2 -fPIC -std=c++2a -g -O2   -iquote . -I.. -iquote ../fesvr -iquote ../riscv -iquote ../disasm -iquote ../customext -iquote ../fdt -iquote ../softfloat -iquote ../spike_main -iquote ../spike_dasm -I/usr/include   -c ../fesvr/tsi.cc
+
+g++ -L. -Wl,--export-dynamic -L/usr/lib64  -Wl,-rpath,`realpath ../install/`/lib  -shared -o libfesvr.so  elfloader.o htif.o memif.o dtm.o syscall.o device.o rfb.o context.o htif_pthread.o htif_hexwriter.o dummy.o option_parser.o term.o tsi.o  -lpthread -ldl -lpthread 
+
+cp libfesvr.so ../install/lib
+make
+make install

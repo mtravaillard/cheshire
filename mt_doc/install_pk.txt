@@ -1,0 +1,27 @@
+  935  git clone https://github.com/riscv-software-src/riscv-pk\n
+  937  cd riscv-pk
+  965  riscv -riscv64-gcc-linux-gnu-13.2.0 zsh
+  966  mkdir build
+  967  mkdir install
+  968  cd build
+  969  ../configure --prefix=`realpath ../install/` --host=riscv64-unknown-elf --with-dts=/scratch/ga25f6/cheshire/sw/boot/cheshire.dtsi
+  970  make
+  971  make install
+
+
+### With custom dts : 
+../configure --prefix=`realpath ../install/` --host=riscv64-unknown-elf --with-dts=/scratch/ga25f6/cheshire/sw/boot/cheshire.dtsi 
+Might have to add a lign in the data part of the pk.lds linker...
+
+### For spm, it's not the same dts:
+../configure --prefix=`realpath ../install/` --host=riscv64-unknown-elf --with-dts=/scratch/ga25f6/cheshire/sw/boot/cheshire_spm.dts
+
+!!! I still have to verify which device tree is the good one to run with/without spm !!!
+
+#### ADDING PK FESVR REG IN SPM
+So far : 
+ - add htif reg in spm in the linker
+ - map those virtual value to the physical address
+
+It's working like this, you can check on my fork of pk, at the branch mt/spm
+https://github.com/mtravaillard/riscv-pk.git
