@@ -196,6 +196,27 @@ packages:
     dependencies:
     - common_cells
     - tech_cells_generic
+  cva6_te_connector:
+    revision: 38cbbec78266798b00908ad91455b5af1ab86fa8
+    version: null
+    source:
+      Git: https://github.com/ubolakes/cva6_te_connector.git
+    dependencies: []
+  rv_tracer:
+    revision: 3076a7fead85f66445b8b676cbe5751bae78de9a
+    version: null
+    source:
+      Git: https://github.com/pulp-platform/rv_tracer.git
+    dependencies:
+    - common_cells
+    - tech_cells_generic
+  rv_encapsulator:
+    revision: c7ae5bdd888161122e93cb716ad2d7aecba543d0
+    version: null
+    source:
+      Git: https://github.com/pulp-platform/rv_encapsulator.git
+    dependencies:
+    - common_cells
   serial_link:
     revision: 5a25f5a71074f1ebb6de7b5280f2b16924bcc666
     version: 1.1.1
