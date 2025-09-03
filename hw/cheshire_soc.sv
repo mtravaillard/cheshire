@@ -731,10 +731,16 @@ module cheshire_soc import cheshire_pkg::*; #(
         .prdata_o            () // not connected
       );
 
-      // encapsulator_ATB instance
-      (* DONT_TOUCH = "TRUE" *) rv_encapsulator #(
-        .FIFO_DEPTH(4)
-      ) i_encapsulator_atb (
+      // encapsulator_axi instance
+      (* DONT_TOUCH = "TRUE" *) rv_encapsulator_axi #(
+        .FIFO_DEPTH   ( 4 ),
+        .AxiAddrWidth ( Cfg.AddrWidth    ),
+        .AxiDataWidth ( Cfg.AxiDataWidth ),
+        .axi_req_t    ( axi_mst_req_t ),
+        .axi_resp_t    ( axi_mst_rsp_t ),
+        .addr_start   ( 32'h1000_0000 ),
+        .addr_end     ( 32'h1001_0000 )
+      ) i_encapsulator_axi (
         .clk_i,
         .rst_ni,
         .valid_i             (te_valid),
@@ -742,14 +748,10 @@ module cheshire_soc import cheshire_pkg::*; #(
         .notime_i            (i_TE.notime),
         .timestamp_i         ('0), // understand where to read the csr value
         .trace_payload_i     (packet_payload),
-        .atready_i           ('1), // always ready: check if it breaks something
-        .afvalid_i           ('0),
-        .atbytes_o           (), // not connected
-        .atdata_o            (), // not connected
-        .atid_o              (), // not connected
-        .atvalid_o           (), // not connected
-        .afready_o           (), // not connected
-        .encapsulator_ready_o(encap_ready)
+        .encapsulator_ready_o(encap_ready),
+        // connected to dma axi signals.
+        .axi_req_o           (axi_in_req[AxiIn.dma]),
+        .axi_resp_i          (axi_in_rsp[AxiIn.dma]) 
       );
 
     end
@@ -1501,6 +1503,7 @@ module cheshire_soc import cheshire_pkg::*; #(
   //  DMA  //
   ///////////
 
+/*
   if (Cfg.Dma) begin : gen_dma
 
     axi_slv_req_t dma_amo_req, dma_cut_req;
@@ -1607,6 +1610,7 @@ module cheshire_soc import cheshire_pkg::*; #(
     end
 
   end
+*/
 
   if (!(Cfg.Dma && Cfg.BusErr)) begin : gen_dma_bus_err_tie
     assign intr.intn.bus_err.dma = '0;
