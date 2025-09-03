@@ -737,9 +737,7 @@ module cheshire_soc import cheshire_pkg::*; #(
         .AxiAddrWidth ( Cfg.AddrWidth    ),
         .AxiDataWidth ( Cfg.AxiDataWidth ),
         .axi_req_t    ( axi_mst_req_t ),
-        .axi_resp_t    ( axi_mst_rsp_t ),
-        .addr_start   ( 32'h1000_0000 ),
-        .addr_end     ( 32'h1001_0000 )
+        .axi_resp_t    ( axi_mst_rsp_t )
       ) i_encapsulator_axi (
         .clk_i,
         .rst_ni,
@@ -749,9 +747,12 @@ module cheshire_soc import cheshire_pkg::*; #(
         .timestamp_i         ('0), // understand where to read the csr value
         .trace_payload_i     (packet_payload),
         .encapsulator_ready_o(encap_ready),
-        // connected to dma axi signals.
+        // connected to dma axi signals
         .axi_req_o           (axi_in_req[AxiIn.dma]),
-        .axi_resp_i          (axi_in_rsp[AxiIn.dma]) 
+        .axi_resp_i          (axi_in_rsp[AxiIn.dma]),
+        // reg are 32 bits length and AddrWidth can be > or = to 32
+        .addr_start_i        ({{(Cfg.AddrWidth - 32){1'b0}}, reg_reg2hw.tracer_addr_start.q}),
+        .addr_end_i          ({{(Cfg.AddrWidth - 32){1'b0}}, reg_reg2hw.tracer_addr_end.q})
       );
 
     end
@@ -1121,6 +1122,7 @@ module cheshire_soc import cheshire_pkg::*; #(
   /////////////////////
 
   cheshire_reg_pkg::cheshire_hw2reg_t reg_hw2reg;
+  cheshire_reg_pkg::cheshire_reg2hw_t reg_reg2hw;
 
   assign reg_hw2reg = '{
     boot_mode     : boot_mode_i,
@@ -1160,6 +1162,7 @@ module cheshire_soc import cheshire_pkg::*; #(
     .reg_req_i  ( reg_out_req[RegOut.regs] ),
     .reg_rsp_o  ( reg_out_rsp[RegOut.regs] ),
     .hw2reg     ( reg_hw2reg ),
+    .reg2hw     ( reg_reg2hw ),
     .devmode_i  ( 1'b1 )
   );
 

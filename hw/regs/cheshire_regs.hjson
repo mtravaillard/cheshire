@@ -132,5 +132,23 @@
       ]
     }
 
+    { name:     "tracer_addr_start"
+      desc:     "Beginning address for trace axi communication"
+      swaccess: "rw"
+      hwaccess: "hro"
+      fields: [
+        { bits: "31:0", resval: "0x10000000",    name: "addr",    desc: "Addr"   }
+      ]
+    }
+
+    { name:     "tracer_addr_end"
+      desc:     "Ending address for trace axi communication"
+      swaccess: "rw"
+      hwaccess: "hro"
+      fields: [
+        { bits: "31:0", resval: "0x10010000",    name: "addr",    desc: "Addr"   }
+      ]
+    }
+
   ]
 }
