@@ -120,6 +120,7 @@ module cheshire_soc import cheshire_pkg::*; #(
 );
 
   `include "axi/typedef.svh"
+  `include "apb/typedef.svh"
   `include "common_cells/registers.svh"
   `include "common_cells/assertions.svh"
   `include "cheshire/typedef.svh"
@@ -619,6 +620,11 @@ module cheshire_soc import cheshire_pkg::*; #(
   logic encap_ready;
   logic encap_valid;
 
+  // APB signals for te_reg (tracer registers)
+`APB_TYPEDEF_ALL(apb, logic [Cfg.AddrWidth-1:0], logic [31:0], logic [3:0])
+  apb_req_t  apb_req;
+  apb_resp_t apb_rsp;
+
   for (genvar i = 0; i < NumIntHarts; i++) begin : gen_cva6_cores
     axi_cva6_req_t core_out_req, core_ur_req;
     axi_cva6_rsp_t core_out_rsp, core_ur_rsp;
@@ -696,6 +702,20 @@ module cheshire_soc import cheshire_pkg::*; #(
         .iaddr_o        (iaddr)
       );
 
+      reg_to_apb #(
+        .reg_req_t ( reg_req_t ),
+        .reg_rsp_t ( reg_rsp_t ),
+        .apb_req_t ( apb_req_t ),
+        .apb_rsp_t ( apb_resp_t )
+      ) i_reg_to_apb (
+        .clk_i,
+        .rst_ni,
+        .reg_req_i (reg_out_req[RegOut.tracer]),
+        .reg_rsp_o (reg_out_rsp[RegOut.tracer]),
+        .apb_req_o ( apb_req ),
+        .apb_rsp_i ( apb_rsp )
+      );
+
       // TE instance
       // TODO: hardwire te_reg signals
       // because I can't use APB to write
@@ -717,19 +737,24 @@ module cheshire_soc import cheshire_pkg::*; #(
         .tvec_i              ('0),
         .epc_i               ('0),
         .encapsulator_ready_i(encap_ready),
-        .paddr_i             ('0),
-        .pwrite_i            ('0),
-        .psel_i              ('0),
-        .penable_i           ('0),
-        .pwdata_i            ('0),
+        // ToDO: Fix the missing signals ?
+        // missing pprot, pstrb => seems to not be a real problem...
+        .paddr_i             (apb_req.paddr), // will take the last 8 bits of the address, no need to adapt it.
+        .pwrite_i            (apb_req.pwrite),
+        .psel_i              (apb_req.psel),
+        .penable_i           (apb_req.penable),
+        .pwdata_i            (apb_req.pwdata),
         .packet_valid_o      (te_valid),
         .packet_type_o       (packet_type),
         .packet_length_o     (packet_length),
         .packet_payload_o    (packet_payload),
-        .stall_o             (), // not connected
-        .pready_o            (), // not connected
-        .prdata_o            () // not connected
+        .stall_o             (),
+        // missing pslverr => can be forced to zero
+        .pready_o            (apb_rsp.pready),
+        .prdata_o            (apb_rsp.prdata)
       );
+      // for now we consider that there is no error
+      assign apb_rsp.pslverr = '0;
 
       // encapsulator_axi instance
       (* DONT_TOUCH = "TRUE" *) rv_encapsulator_axi #(

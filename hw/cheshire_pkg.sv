@@ -279,6 +279,7 @@ package cheshire_pkg;
   localparam doub_bt AmLlc    = 'h0300_1000;
   localparam doub_bt AmSlink  = 'h0300_6000;
   localparam doub_bt AmBusErr = 'h0300_9000;
+  localparam doub_bt AmTracer = 'h0300_a000;
   localparam doub_bt AmSpm    = 'h1000_0000;  // Cached region at bottom, uncached on top
   localparam doub_bt AmSpmUnc = 'h1400_0000;
   localparam doub_bt AmClic   = 'h0800_0000;
@@ -382,6 +383,7 @@ package cheshire_pkg;
   // Reg demux slave indices and map
   typedef struct packed {
     aw_bt err;    // Error slave for decoder; has no rules
+    aw_bt tracer; // access to te_reg
     aw_bt clint;
     aw_bt plic;
     aw_bt regs;
@@ -427,6 +429,13 @@ package cheshire_pkg;
     if (cfg.BusErr) for (int j = 0; j < 2 + cfg.NumCores; j++) begin
       i++; ret.bus_err[j] = i; r++; ret.map[r] = '{i, AmBusErr + j*'h40,  AmBusErr + (j+1)*'h40};
     end
+
+    // tracer reg
+    i++;
+    ret.tracer = i;
+    r++;
+    ret.map[r] = '{i, AmTracer, AmTracer + 'h100};
+
     i++; r++;
     ret.ext_base  = i;
     ret.num_out   = i + cfg.RegExtNumSlv;
