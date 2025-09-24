@@ -33,7 +33,7 @@ dependencies:
   dram_rtl_sim:             { git: "https://github.com/pulp-platform/dram_rtl_sim.git",           version: 0.1.1  }
   cva6_te_connector:        { git: "https://github.com/ubolakes/cva6_te_connector.git",           rev: 38cbbec78266798b00908ad91455b5af1ab86fa8 }
   rv_tracer:                { git: "https://github.com/pulp-platform/rv_tracer.git",              rev: 3076a7fead85f66445b8b676cbe5751bae78de9a }
-  rv_encapsulator:          { git: "https://github.com/mtravaillard/rv_encapsulator.git",        rev: 66095130f82160085ca1ed0f345a5b1da5ef0831 }
+  rv_encapsulator:          { git: "https://github.com/mtravaillard/rv_encapsulator.git",         rev: d986505893314a86bbd34a8abf78b3c16d4a05fd }
   
 export_include_dirs:
   - hw/include

@@ -137,7 +137,7 @@
       swaccess: "rw"
       hwaccess: "hro"
       fields: [
-        { bits: "31:0", resval: "0x10000000",    name: "addr",    desc: "Addr"   }
+        { bits: "31:0", resval: "0x10000000",    name: "tracer_addr_start",    desc: "Start address for tracing output"   }
       ]
     }
 
@@ -146,7 +146,18 @@
       swaccess: "rw"
       hwaccess: "hro"
       fields: [
-        { bits: "31:0", resval: "0x10010000",    name: "addr",    desc: "Addr"   }
+        { bits: "31:0", resval: "0x10010000",    name: "tracer_addr_end",    desc: "End address for tracing output"   }
+      ]
+    }
+
+    { name:     "tracer_addr_curr"
+      desc:     "Address of the last output on axi from tracer"
+      swaccess: "ro"
+      hwaccess: "hwo"
+      hwqe:     "true"
+      hwext:    "true"
+      fields: [
+        { bits: "31:0", resval: "0x10000000",    name: "tracer_addr_curr",    desc: "Address of the last tracing output"   }
       ]
     }
 

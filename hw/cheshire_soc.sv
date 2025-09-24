@@ -619,11 +619,13 @@ module cheshire_soc import cheshire_pkg::*; #(
   // encapsulator out
   logic encap_ready;
   logic encap_valid;
+  logic [31:0] trace_addr_curr_o;
 
   // APB signals for te_reg (tracer registers)
 `APB_TYPEDEF_ALL(apb, logic [Cfg.AddrWidth-1:0], logic [31:0], logic [3:0])
   apb_req_t  apb_req;
   apb_resp_t apb_rsp;
+
 
   for (genvar i = 0; i < NumIntHarts; i++) begin : gen_cva6_cores
     axi_cva6_req_t core_out_req, core_ur_req;
@@ -777,9 +779,9 @@ module cheshire_soc import cheshire_pkg::*; #(
         .axi_resp_i          (axi_in_rsp[AxiIn.dma]),
         // reg are 32 bits length and AddrWidth can be > or = to 32
         .addr_start_i        ({{(Cfg.AddrWidth - 32){1'b0}}, reg_reg2hw.tracer_addr_start.q}),
-        .addr_end_i          ({{(Cfg.AddrWidth - 32){1'b0}}, reg_reg2hw.tracer_addr_end.q})
+        .addr_end_i          ({{(Cfg.AddrWidth - 32){1'b0}}, reg_reg2hw.tracer_addr_end.q}),
+        .addr_last_w_o       (trace_addr_curr_o)
       );
-
     end
 
     if (Cfg.BusErr) begin : gen_cva6_bus_err
@@ -1150,32 +1152,33 @@ module cheshire_soc import cheshire_pkg::*; #(
   cheshire_reg_pkg::cheshire_reg2hw_t reg_reg2hw;
 
   assign reg_hw2reg = '{
-    boot_mode     : boot_mode_i,
-    rtc_freq      : Cfg.RtcFreq,
-    platform_rom  : Cfg.PlatformRom,
-    num_int_harts : NumIntHarts,
-    hw_features   : '{
-      bootrom     : Cfg.Bootrom,
-      llc         : Cfg.LlcNotBypass,
-      uart        : Cfg.Uart,
-      i2c         : Cfg.I2c,
-      gpio        : Cfg.Gpio,
-      spi_host    : Cfg.SpiHost,
-      dma         : Cfg.Dma,
-      serial_link : Cfg.SerialLink,
-      vga         : Cfg.Vga,
-      usb         : Cfg.Usb,
-      axirt       : Cfg.AxiRt,
-      clic        : Cfg.Clic,
-      irq_router  : Cfg.IrqRouter,
-      bus_err     : Cfg.BusErr
+    boot_mode        : boot_mode_i,
+    rtc_freq         : Cfg.RtcFreq,
+    platform_rom     : Cfg.PlatformRom,
+    num_int_harts    : NumIntHarts,
+    hw_features      : '{
+      bootrom        : Cfg.Bootrom,
+      llc            : Cfg.LlcNotBypass,
+      uart           : Cfg.Uart,
+      i2c            : Cfg.I2c,
+      gpio           : Cfg.Gpio,
+      spi_host       : Cfg.SpiHost,
+      dma            : Cfg.Dma,
+      serial_link    : Cfg.SerialLink,
+      vga            : Cfg.Vga,
+      usb            : Cfg.Usb,
+      axirt          : Cfg.AxiRt,
+      clic           : Cfg.Clic,
+      irq_router     : Cfg.IrqRouter,
+      bus_err        : Cfg.BusErr
     },
-    llc_size      : get_llc_size(Cfg),
-    vga_params    : '{
-      red_width   : Cfg.VgaRedWidth,
-      green_width : Cfg.VgaGreenWidth,
-      blue_width  : Cfg.VgaBlueWidth
-    }
+    llc_size         : get_llc_size(Cfg),
+    vga_params       : '{
+      red_width      : Cfg.VgaRedWidth,
+      green_width    : Cfg.VgaGreenWidth,
+      blue_width     : Cfg.VgaBlueWidth
+    },
+    tracer_addr_curr : trace_addr_curr_o
   };
 
   cheshire_reg_top #(
