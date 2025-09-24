@@ -14,3 +14,6 @@
 	path = sw/deps/riscv-pk
 	url = https://github.com/riscv-software-src/riscv-pk.git
 	ignore = dirty
+[submodule "sw/deps/riscv-tests"]
+	path = sw/deps/riscv-tests
+	url = https://github.com/riscv-software-src/riscv-tests.git
