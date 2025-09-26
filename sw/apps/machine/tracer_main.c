@@ -19,15 +19,12 @@ int main (int argc, char** argv) {
   enable_tracer();
   while(!tracer_activated());
   asm(
-    "li t0, 0\n"
-    "li t1, 10\n"
+    "li t0, 5\n"
+    "li t1, 1\n"
     "loop:\n"
+    "sub t0, t0, t1\n"
     "nop\n"
-    "addi t0, t0, 1\n"
-    "sub t2, t1, t0\n"
-    "nop\n"
-    "beqz t2, loop_exit\n"
-    "j loop\n"
+    "bnez t0, loop\n"
     "loop_exit:\n"
     "nop\n"
     "nop\n"

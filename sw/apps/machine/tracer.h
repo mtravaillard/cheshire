@@ -15,67 +15,68 @@ static void *const __base_regs   = (void *)0x03000000;
 /* FILTER */
 // input and mode
 #define CAUSE_ENABLE_MODE   0x00
-#define TVEC_ENABLE_MODE    0x01
-#define TVAL_ENABLE_MODE    0x02
-#define PRIV_ENABLE_MODE    0x03
-#define IADDR_ENABLE_MODE   0x04
+#define TVEC_ENABLE_MODE    0x04
+#define TVAL_ENABLE_MODE    0x08
+#define PRIV_ENABLE_MODE    0x0c
+#define IADDR_ENABLE_MODE   0x10
 // cause
-#define CAUSE_UPPER         0x05
-#define CAUSE_LOWER         0x06
-#define CAUSE_MATCH         0x07
+#define CAUSE_UPPER         0x14
+#define CAUSE_LOWER         0x18
+#define CAUSE_MATCH         0x1c
 // tvec
-#define TVEC_UPPER_L        0x08
-#define TVEC_UPPER_M        0x09
-#define TVEC_LOWER_L        0x0A
-#define TVEC_LOWER_M        0x0B
-#define TVEC_MATCH_L        0x0C
-#define TVEC_MATCH_M        0x0D
+#define TVEC_UPPER_L        0x20
+#define TVEC_UPPER_M        0x24
+#define TVEC_LOWER_L        0x28
+#define TVEC_LOWER_M        0x2c
+#define TVEC_MATCH_L        0x30
+#define TVEC_MATCH_M        0x34
 // tval
-#define TVAL_UPPER_L        0x0E
-#define TVAL_UPPER_M        0x0F
-#define TVAL_LOWER_L        0x10
-#define TVAL_LOWER_M        0x11
-#define TVAL_MATCH_L        0x12
-#define TVAL_MATCH_M        0x13
+#define TVAL_UPPER_L        0x38
+#define TVAL_UPPER_M        0x3c
+#define TVAL_LOWER_L        0x40
+#define TVAL_LOWER_M        0x44
+#define TVAL_MATCH_L        0x48
+#define TVAL_MATCH_M        0x4c
 // priv
-#define PRIV_RANGE          0x14
-#define PRIV_MATCH          0x15
+#define PRIV_RANGE          0x50
+#define PRIV_MATCH          0x54
 // iaddr
-#define IADDR_UPPER_L       0x16
-#define IADDR_UPPER_M       0x17
-#define IADDR_LOWER_L       0x18
-#define IADDR_LOWER_M       0x19
-#define IADDR_MATCH_L       0x1A
-#define IADDR_MATCH_M       0x1B
-/* TRACE MANAGEMENT */
-#define TRACE_STATE         0x1C
-#define LOSSLESS_TRACE      0x1D
-#define SHALLOW_TRACE       0x1E
-/* PACKET EMITTER */
-#define NO_TIME             0x1F
-#define NO_CONTEXT          0x20
-#define DELTA_ADDRESS       0x21
-#define FULL_ADDRESS        0x22
-#define IMPLICIT_EXCEPTION  0x23
-#define SIJUMP              0x24
-#define IMPLICIT_RETURN     0x25
-#define BRANCH_PREDICTION   0x26
-#define JUMP_TARGET_CACHE   0x27
+#define IADDR_UPPER_L       0x58
+#define IADDR_UPPER_M       0x5c
+#define IADDR_LOWER_L       0x60
+#define IADDR_LOWER_M       0x64
+#define IADDR_MATCH_L       0x68
+#define IADDR_MATCH_M       0x6c
 
+// TRACE MANAGEMENT
+#define TRACE_STATE         0x70
+#define LOSSLESS_TRACE      0x74
+#define SHALLOW_TRACE       0x78
+
+// PACKET EMITTER
+#define NO_TIME             0x7c
+#define NO_CONTEXT          0x80
+#define DELTA_ADDRESS       0x84
+#define FULL_ADDRESS        0x88
+#define IMPLICIT_EXCEPTION  0x8c
+#define SIJUMP              0x90
+#define IMPLICIT_RETURN     0x94
+#define BRANCH_PREDICTION   0x98
+#define JUMP_TARGET_CACHE   0x9c
 // CVA6 REG
 #define CHESHIRE_TRACER_ADDR_START_OFFSET 0x5c
 #define CHESHIRE_TRACER_ADDR_END_OFFSET   0x60
 #define CHESHIRE_TRACER_ADDR_CURR_OFFSET  0x64
 
 static inline volatile uint8_t *reg8(void *base, int offs) {
-    return (volatile uint8_t *)(base + offs);
+    return (volatile uint8_t *)((uint8_t *)base + offs);
 }
 
 static inline volatile uint32_t *reg32(void *base, int offs) {
-    return (volatile uint32_t *)(base + offs);
+    return (volatile uint32_t *)((uint8_t *)base + offs);
 }
 
-void te_reg_write(uint8_t offset, uint8_t byte) {
+void te_reg_write(int offset, uint32_t byte) {
     *reg8(__base_tracer, offset) = byte;
 }
 

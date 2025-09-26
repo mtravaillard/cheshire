@@ -741,7 +741,8 @@ module cheshire_soc import cheshire_pkg::*; #(
         .encapsulator_ready_i(encap_ready),
         // ToDO: Fix the missing signals ?
         // missing pprot, pstrb => seems to not be a real problem...
-        .paddr_i             (apb_req.paddr), // will take the last 8 bits of the address, no need to adapt it.
+        // will take the last 8 bits of the address, adapted to match te_reg address
+        .paddr_i             (apb_req.paddr >> 2),
         .pwrite_i            (apb_req.pwrite),
         .psel_i              (apb_req.psel),
         .penable_i           (apb_req.penable),
