@@ -124,6 +124,15 @@ extern "C" {
 #define CHESHIRE_VGA_PARAMS_BLUE_WIDTH_FIELD \
   ((bitfield_field32_t) { .mask = CHESHIRE_VGA_PARAMS_BLUE_WIDTH_MASK, .index = CHESHIRE_VGA_PARAMS_BLUE_WIDTH_OFFSET })
 
+// Beginning address for trace axi communication
+#define CHESHIRE_TRACER_ADDR_START_REG_OFFSET 0x5c
+
+// Ending address for trace axi communication
+#define CHESHIRE_TRACER_ADDR_END_REG_OFFSET 0x60
+
+// Address of the last output on axi from tracer
+#define CHESHIRE_TRACER_ADDR_CURR_REG_OFFSET 0x64
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

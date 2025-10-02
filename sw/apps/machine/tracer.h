@@ -20,49 +20,52 @@ static void *const __base_regs   = (void *)0x03000000;
 #define PRIV_ENABLE_MODE    0x0c
 #define IADDR_ENABLE_MODE   0x10
 // cause
-#define CAUSE_UPPER         0x14
-#define CAUSE_LOWER         0x18
-#define CAUSE_MATCH         0x1c
+#define CAUSE_UPPER_L       0x14
+#define CAUSE_UPPER_M       0x18
+#define CAUSE_LOWER_L       0x1c
+#define CAUSE_LOWER_M       0x20
+#define CAUSE_MATCH_L       0x24
+#define CAUSE_MATCH_M       0x28
 // tvec
-#define TVEC_UPPER_L        0x20
-#define TVEC_UPPER_M        0x24
-#define TVEC_LOWER_L        0x28
-#define TVEC_LOWER_M        0x2c
-#define TVEC_MATCH_L        0x30
-#define TVEC_MATCH_M        0x34
+#define TVEC_UPPER_L        0x2c
+#define TVEC_UPPER_M        0x30
+#define TVEC_LOWER_L        0x34
+#define TVEC_LOWER_M        0x38
+#define TVEC_MATCH_L        0x3c
+#define TVEC_MATCH_M        0x40
 // tval
-#define TVAL_UPPER_L        0x38
-#define TVAL_UPPER_M        0x3c
-#define TVAL_LOWER_L        0x40
-#define TVAL_LOWER_M        0x44
-#define TVAL_MATCH_L        0x48
-#define TVAL_MATCH_M        0x4c
+#define TVAL_UPPER_L        0x44
+#define TVAL_UPPER_M        0x48
+#define TVAL_LOWER_L        0x4c
+#define TVAL_LOWER_M        0x50
+#define TVAL_MATCH_L        0x54
+#define TVAL_MATCH_M        0x58
 // priv
-#define PRIV_RANGE          0x50
-#define PRIV_MATCH          0x54
+#define PRIV_RANGE          0x5c
+#define PRIV_MATCH          0x60
 // iaddr
-#define IADDR_UPPER_L       0x58
-#define IADDR_UPPER_M       0x5c
-#define IADDR_LOWER_L       0x60
-#define IADDR_LOWER_M       0x64
-#define IADDR_MATCH_L       0x68
-#define IADDR_MATCH_M       0x6c
+#define IADDR_UPPER_L       0x64
+#define IADDR_UPPER_M       0x68
+#define IADDR_LOWER_L       0x6c
+#define IADDR_LOWER_M       0x70
+#define IADDR_MATCH_L       0x74
+#define IADDR_MATCH_M       0x78
 
 // TRACE MANAGEMENT
-#define TRACE_STATE         0x70
-#define LOSSLESS_TRACE      0x74
-#define SHALLOW_TRACE       0x78
+#define TRACE_STATE         0x7c
+#define LOSSLESS_TRACE      0x80
+#define SHALLOW_TRACE       0x84
 
 // PACKET EMITTER
-#define NO_TIME             0x7c
-#define NO_CONTEXT          0x80
-#define DELTA_ADDRESS       0x84
-#define FULL_ADDRESS        0x88
-#define IMPLICIT_EXCEPTION  0x8c
-#define SIJUMP              0x90
-#define IMPLICIT_RETURN     0x94
-#define BRANCH_PREDICTION   0x98
-#define JUMP_TARGET_CACHE   0x9c
+#define NO_TIME             0x88
+#define NO_CONTEXT          0x8c
+#define DELTA_ADDRESS       0x90
+#define FULL_ADDRESS        0x94
+#define IMPLICIT_EXCEPTION  0x98
+#define SIJUMP              0x9c
+#define IMPLICIT_RETURN     0xa0
+#define BRANCH_PREDICTION   0xa4
+#define JUMP_TARGET_CACHE   0xa8
 // CVA6 REG
 #define CHESHIRE_TRACER_ADDR_START_OFFSET 0x5c
 #define CHESHIRE_TRACER_ADDR_END_OFFSET   0x60
@@ -81,6 +84,8 @@ void te_reg_write(int offset, uint32_t byte) {
 }
 
 // raising activation signal
+// make sure that trace_activated_q reset to 0 in te_reg.sv (line 776)
+// Otherwise, this function won't work...
 void  enable_tracer() { te_reg_write(TRACE_STATE, 1); }
 
 // add wait tracer_activated -> read te_reg 
@@ -95,13 +100,18 @@ void disable_tracer() {
     te_reg_write(LOSSLESS_TRACE,    0x00); // desactivate tracing
     te_reg_write(SHALLOW_TRACE,     0x00); // desactivate tracing
     // create filters
-    te_reg_write(CAUSE_LOWER,       0xff);
-    te_reg_write(CAUSE_ENABLE_MODE, 0x03); // activate matching
+    te_reg_write(CAUSE_LOWER_L,       0xff);
+    te_reg_write(CAUSE_LOWER_M,       0xff);
+    te_reg_write(CAUSE_ENABLE_MODE, 0x01); // activate matching
     // This should "disable" the tracer, by filtering everything with unpossible condition
 }
 
 // create wait_filter activated -> read te_reg -> tracer_enable -> usefull ?
-
+// add wait tracer_activated -> read te_reg 
+bool cause_filter_activated() {
+    uint8_t value = *reg8(__base_tracer, CAUSE_ENABLE_MODE);
+    return (value == 1);
+}
 uint32_t tracer_address(uint8_t offset) {
     uint32_t address = *reg32(__base_regs, offset);
     return address;
