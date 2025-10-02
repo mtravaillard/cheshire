@@ -12,6 +12,7 @@ package:
     - "Thomas Benz <tbenz@iis.ee.ethz.ch>"
 
 dependencies:
+  apb:                      { git: "https://github.com/pulp-platform/apb.git",                    version: 0.2.4  }
   apb_uart:                 { git: "https://github.com/pulp-platform/apb_uart.git",               version: 0.2.3  }
   axi:                      { git: "https://github.com/pulp-platform/axi.git",                    version: 0.39.8 }
   axi_llc:                  { git: "https://github.com/pulp-platform/axi_llc.git",                version: 0.2.1  }
@@ -32,7 +33,7 @@ dependencies:
   unbent:                   { git: "https://github.com/pulp-platform/unbent.git",                 version: 0.1.6  }
   dram_rtl_sim:             { git: "https://github.com/pulp-platform/dram_rtl_sim.git",           version: 0.1.1  }
   cva6_te_connector:        { git: "https://github.com/ubolakes/cva6_te_connector.git",           rev: 38cbbec78266798b00908ad91455b5af1ab86fa8 }
-  rv_tracer:                { git: "https://github.com/pulp-platform/rv_tracer.git",              rev: 3076a7fead85f66445b8b676cbe5751bae78de9a }
+  rv_tracer:                { git: "https://github.com/mtravaillard/rv_tracer.git",              rev: 8c01ea6795c00de77052b787972c16e0cf9bcd77 }
   rv_encapsulator:          { git: "https://github.com/mtravaillard/rv_encapsulator.git",         rev: d986505893314a86bbd34a8abf78b3c16d4a05fd }
   
 export_include_dirs:
